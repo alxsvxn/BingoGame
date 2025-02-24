@@ -7,18 +7,42 @@ Option Explicit On
 Module BingoGame
 
     Sub Main()
-        DisplayBoard()
+        For i = 1 To 10
+
+            Drawball()
+            DisplayBoard()
+            Console.Read()
+            Console.Clear()
+        Next
+
     End Sub
 
+    Sub Drawball()
+        Dim temp(,) As Boolean = BingoTracker(0, 0)
+        Dim currentBallNumber As Integer
+        Dim currentBallInteger As Integer
+
+        Do
+            currentBallNumber = RandomNumberBetween(0, 14)
+            currentBallInteger = RandomNumberBetween(0, 4)
+        Loop Until temp(currentBallNumber, currentBallInteger) = False
+
+        BingoTracker(currentBallNumber, currentBallInteger)
+        Console.WriteLine($"The current row is {currentBallNumber} and the column is {currentBallInteger}")
+
+    End Sub
     Function BingoTracker(ballNumber As Integer, ballLetter As Integer) As Boolean(,)
         Static _bingoTracker(14, 4) As Boolean
+
+        _bingoTracker(ballNumber, ballLetter) = True
 
         Return _bingoTracker
     End Function
 
     Sub DisplayBoard()
-        Dim temp As String = "X |"
+        Dim temp As String = " |"
         Dim heading() As String = {"B", "I", "N", "G", "O"}
+        Dim tracker(,) As Boolean = BingoTracker(0, 0)
 
         For Each letter In heading
             Console.Write(letter.PadLeft(2).PadRight(4))
@@ -27,10 +51,17 @@ Module BingoGame
         Console.WriteLine()
         Console.WriteLine(StrDup(20, "_"))
 
-        For i = 1 To 15
-            For j = 1 To 5
+        For currentNumber = 1 To 14
+            For currentInteger = 1 To 4
+
+                If tracker(currentNumber, currentInteger) Then
+                    temp = "X |"
+                Else
+                    temp = " |"
+                End If
                 temp = temp.PadLeft(4)
                 Console.Write(temp)
+
             Next
             Console.WriteLine()
         Next
